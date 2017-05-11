@@ -5,3 +5,38 @@
 #
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
+
+default_user = User.new(
+    name: 'system',
+    nickname: 'system',
+    image: '',
+    email: 'a@b.com',
+    password: 'abcdefghijkl'
+)
+default_user.save!
+
+user = User.new(
+    name: 'user',
+    nickname: 'user',
+    image: '',
+    email: 'b@c.com',
+    password: '123456789'
+)
+
+list = List.new(
+    name: 'default',
+    order: 0,
+    created_by: default_user
+)
+
+list.save!
+
+(1..5).each do |i|
+    item = Item.new(
+        list: list,
+        title: "hogehoge#{i}",
+        star_count: 0,
+        created_by: user
+    )
+    item.save!
+end
