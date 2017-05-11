@@ -3,7 +3,7 @@ class CreateLists < ActiveRecord::Migration[5.0]
     create_table :lists do |t|
       t.string :name, null: false
       t.integer :order, null: false
-      t.string :status, null: false
+      t.integer :status, null: false, default: 0
       t.references :created_by, foreign_key: true, null: false
 
       t.timestamps

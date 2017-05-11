@@ -1,21 +1,23 @@
 class ListsController < ApplicationController
-  before_action :set_list, only: [:show, :update, :destroy]
+  before_action :set_list, only: [:update]
+  before_action :authenticated_user!, only: [:create, :update]
 
   # GET /lists
   def index
-    @lists = List.all
+    status = params['status']
+    if params['status'] == 'archived'
+      @lists = List.where(status: :archived)
+    else
+      @lists = List.where(status: :active)
+    end
 
     render json: @lists
-  end
-
-  # GET /lists/1
-  def show
-    render json: @list
   end
 
   # POST /lists
   def create
     @list = List.new(list_params)
+    @list.created_by = current_user
 
     if @list.save
       render json: @list, status: :created, location: @list
@@ -33,11 +35,6 @@ class ListsController < ApplicationController
     end
   end
 
-  # DELETE /lists/1
-  def destroy
-    @list.destroy
-  end
-
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_list
@@ -46,6 +43,6 @@ class ListsController < ApplicationController
 
     # Only allow a trusted parameter "white list" through.
     def list_params
-      params.require(:list).permit(:name, :order, :status, :created_by_id)
+      params.require(:list).permit(:name, :status)
     end
 end
