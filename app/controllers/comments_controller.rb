@@ -1,6 +1,6 @@
 class CommentsController < ApplicationController
   before_action :set_comment, only: [:destroy]
-  before_action :authenticated_user!, only: [:create, :destroy, :addstar, :delstar]
+  before_action :authenticate_user!, only: [:create, :destroy, :addstar, :delstar]
 
   # GET /items/:item_id/comments
   def index

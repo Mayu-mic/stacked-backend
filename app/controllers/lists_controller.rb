@@ -1,6 +1,6 @@
 class ListsController < ApplicationController
   before_action :set_list, only: [:update]
-  before_action :authenticated_user!, only: [:create, :update]
+  before_action :authenticate_user!, only: [:create, :update]
 
   # GET /lists
   def index
