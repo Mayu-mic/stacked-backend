@@ -1,5 +1,5 @@
 class CommentsController < ApplicationController
-  before_action :set_comment, only: [:destroy]
+  before_action :set_comment, only: [:destroy, :addstar]
   before_action :authenticate_user!, only: [:create, :destroy, :addstar, :delstar]
 
   # GET /items/:item_id/comments
@@ -29,38 +29,20 @@ class CommentsController < ApplicationController
 
   # POST /comments/1/star
   def addstar
-    begin
-      Item.transaction do
-        @comment_star = CommentStar.new(comment_star_params)
-        @comment_star.created_by = current_user
-        @comment_star.save!
-        @comment = Comment.find(params[:comment_id])
-        @comment.star_count += 1
-        @comment.save!
-      end
-      render json: @comment
-    rescue => e
-      render json: e, status: :unprocessable_entity
+    @star = CommentStar.new(comment_star_params)
+    @star.created_by = current_user
+    @star.item = @item
+    if @star.save
+      render json: @star
+    else
+      render json: @star.errors, status: :unprocessable_entity
     end
   end
 
   # DELETE /comments/1/star
   def delstar
-    begin
-      Item.transaction do
-        @comment_star = CommentStar.where(comment_id: params['comment_id'], created_by_id: current_user.id).first
-        unless @comment_star
-          raise 'target not found.'
-        end
-        @comment_star.destroy!
-        @comment = Comment.find(params[:comment_id])
-        @comment.star_count -= 1
-        @comment.save!
-      end
-      render json: @comment
-    rescue => e
-      render json: e, status: :unprocessable_entity
-    end
+    @star = CommentStar.where(comment_id: comment_id, created_by_id: current_user.id)
+    @star.destroy
   end
 
   private

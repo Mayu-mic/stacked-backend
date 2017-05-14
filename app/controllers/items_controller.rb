@@ -1,5 +1,5 @@
 class ItemsController < ApplicationController
-  before_action :set_item, only: [:show, :update, :destroy]
+  before_action :set_item, only: [:show, :update, :destroy, :addstar]
   before_action :authenticate_user!, only: [:create, :update, :destroy, :addstar, :delstar]
 
   # GET /lists/:list_id/items
@@ -17,7 +17,6 @@ class ItemsController < ApplicationController
   def create
     @item = Item.new(item_params)
     @item.created_by = current_user
-    @item.star_count = 0
 
     if @item.save
       render json: @item, status: :created, location: @item
@@ -35,45 +34,27 @@ class ItemsController < ApplicationController
     end
   end
 
+  # DELETE /items/1
+  def destroy
+    @item.destroy
+  end
+
   # POST /items/1/star
   def addstar
-    begin
-      Item.transaction do
-        @item_star = ItemStar.new(item_star_params)
-        @item_star.created_by = current_user
-        @item_star.save!
-        @item = Item.find(params[:item_id])
-        @item.star_count += 1
-        @item.save!
-      end
-      render json: @item
-    rescue => e
-      render json: e, status: :unprocessable_entity
+    @star = ItemStar.new(item_star_params)
+    @star.created_by = current_user
+    @star.item = @item
+    if @star.save
+      render json: @star
+    else
+      render json: @star.errors, status: :unprocessable_entity
     end
   end
 
   # DELETE /items/1/star
   def delstar
-    begin
-      Item.transaction do
-        @item_star = ItemStar.where(item_id: params['item_id'], created_by_id: current_user.id).first
-        unless @item_star
-          raise 'target not found.'
-        end
-        @item_star.destroy!
-        @item = Item.find(params[:item_id])
-        @item.star_count -= 1
-        @item.save!
-      end
-      render json: @item
-    rescue => e
-      render json: e, status: :unprocessable_entity
-    end
-  end
-
-  # DELETE /items/1
-  def destroy
-    @item.destroy
+    @star = ItemStar.where(item_id: item_id, created_by_id: current_user.id).first
+    @star.destroy
   end
 
   private
