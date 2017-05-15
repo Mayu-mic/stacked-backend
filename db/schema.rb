@@ -84,8 +84,6 @@ ActiveRecord::Schema.define(version: 20170511102141) do
     t.datetime "updated_at",                            null: false
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["uid", "provider"], name: "index_users_on_uid_and_provider", unique: true
-    t.index [nil], name: "index_users_on_confirmation_token", unique: true
-    t.index [nil], name: "index_users_on_reset_password_token", unique: true
   end
 
 end
