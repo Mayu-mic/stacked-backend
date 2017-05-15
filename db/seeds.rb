@@ -6,28 +6,38 @@
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
 
-# default_user = User.new(
-#     name: 'system',
-#     nickname: 'system',
-#     image: '',
-#     email: 'a@b.com',
-#     password: 'abcdefghijkl'
-# )
-# default_user.save!
+system_user = User.new(
+    name: 'system',
+    nickname: 'system',
+    image: '',
+    email: 'system@stacked.com',
+    password: 'system-stacked',
+    uid: 'system'
+)
+system_user.save!
 
-# list = List.new(
-#     name: 'default',
-#     order: 0,
-#     created_by: default_user
-# )
-# list.save!
+list = List.new(
+    name: 'default',
+    order: 0,
+    created_by_id: 1, # system user
+    is_system: true
+)
+list.save!
 
-# (1..5).each do |i|
-#     item = Item.new(
-#         list: list,
-#         title: "hogehoge#{i}",
-#         star_count: 0,
-#         created_by: default_user
-#     )
-#     item.save!
-# end
+Item.create([
+    {
+        list: list,
+        title: "Stacked へようこそ！",
+        created_by_id: 1,
+    },
+    {
+        list: list,
+        title: "タスクは自由に追加できます。",
+        created_by_id: 1,
+    },
+    {
+        list: list,
+        title: "それなを押すと、上に表示されます。",
+        created_by_id: 1,
+    },
+])

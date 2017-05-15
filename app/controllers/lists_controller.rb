@@ -1,6 +1,7 @@
 class ListsController < ApplicationController
   before_action :set_list, only: [:update]
   before_action :authenticate_user!, only: [:create, :update]
+  before_action :forbit_default_list_update, only: [:update]
 
   # GET /lists
   def index
@@ -44,5 +45,9 @@ class ListsController < ApplicationController
     # Only allow a trusted parameter "white list" through.
     def list_params
       params.require(:list).permit(:name, :status)
+    end
+
+    def forbit_default_list_update
+      render json: ["cannot update system-defined list"], status: :unprocessable_entity if @list.is_system?
     end
 end

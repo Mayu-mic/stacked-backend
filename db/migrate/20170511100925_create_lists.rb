@@ -5,6 +5,7 @@ class CreateLists < ActiveRecord::Migration[5.0]
       t.integer :order, null: false
       t.integer :status, null: false, default: 0
       t.references :created_by, foreign_key: true, null: false
+      t.boolean :is_system, null: false, default: false
 
       t.timestamps
     end
