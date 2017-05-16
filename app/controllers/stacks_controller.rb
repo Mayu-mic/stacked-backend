@@ -5,7 +5,7 @@ class StacksController < ApplicationController
   # GET /lists/:list_id/stacks
   def index
     @stacks = Stack.where(list_id: params['list_id']).order('star_count DESC')
-    render json: @stacks
+    render json: @stacks, include: [:created_by]
   end
 
   # GET /stacks/1
