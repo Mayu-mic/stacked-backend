@@ -1,5 +1,5 @@
 class StacksController < ApplicationController
-  before_action :set_stack, only: [:show, :update, :destroy, :addstar]
+  before_action :set_stack, only: [:show, :update, :destroy]
   before_action :authenticate_user!, only: [:create, :update, :destroy, :addstar, :delstar]
 
   # GET /lists/:list_id/stacks
@@ -10,7 +10,7 @@ class StacksController < ApplicationController
 
   # GET /stacks/1
   def show
-    render json: @stack
+    render json: @stack, include: [:created_by]
   end
 
   # POST /lists/:list_id/stacks
@@ -18,8 +18,8 @@ class StacksController < ApplicationController
     @stack = Stack.new(stack_params)
     @stack.created_by = current_user
 
-    if @stack.save
-      render json: @stack, status: :created, location: @stack
+    if @stack.save!
+      render json: @stack, include: [:created_by], status: :created, location: @stack
     else
       render json: @stack.errors, status: :unprocessable_entity
     end
@@ -28,7 +28,7 @@ class StacksController < ApplicationController
   # PATCH/PUT /stacks/1
   def update
     if @stack.update(stack_params)
-      render json: @stack
+      render json: @stack, include: [:created_by]
     else
       render json: @stack.errors, status: :unprocessable_entity
     end
@@ -37,15 +37,15 @@ class StacksController < ApplicationController
   # DELETE /stacks/1
   def destroy
     @stack.destroy
+    render json: @stack, include: [:created_by]
   end
 
   # POST /stacks/1/star
   def addstar
     @star = StackStar.new(stack_star_params)
     @star.created_by = current_user
-    @star.stack = @stack
     if @star.save
-      render json: @star
+      render json: @star.stack, include: [:created_by]
     else
       render json: @star.errors, status: :unprocessable_entity
     end
@@ -55,6 +55,7 @@ class StacksController < ApplicationController
   def delstar
     @star = StackStar.where(stack_id: stack_id, created_by_id: current_user.id).first
     @star.destroy
+    render json: @star.stack, include: [:created_by]
   end
 
   private
@@ -65,7 +66,7 @@ class StacksController < ApplicationController
 
     # Only allow a trusted parameter "white list" through.
     def stack_params
-      params.require(:stack).permit(:list_id, :title, :note, :status)
+      params.require(:stack).permit(:title, :note, :list_id)
     end
 
     # Only allow a trusted parameter "white list" through.
