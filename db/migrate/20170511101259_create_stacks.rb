@@ -1,6 +1,6 @@
-class CreateItems < ActiveRecord::Migration[5.0]
+class CreateStacks < ActiveRecord::Migration[5.0]
   def change
-    create_table :items do |t|
+    create_table :stacks do |t|
       t.references :list, foreign_key: true, null: false
       t.string :title, null: false
       t.text :note, null: false, default: ""

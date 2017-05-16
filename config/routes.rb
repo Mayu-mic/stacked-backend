@@ -1,8 +1,8 @@
 Rails.application.routes.draw do
   resources :lists, shallow: true, only: [:index, :create, :update] do
-    resources :items, only: [:index, :show, :create, :update, :destroy] do
-      post '/star', to: 'items#addstar'
-      # delete '/star', to: 'items#delstar'
+    resources :stacks, only: [:index, :show, :create, :update, :destroy] do
+      post '/star', to: 'stacks#addstar'
+      # delete '/star', to: 'stacks#delstar'
       resources :comments, only: [:index, :create, :destroy] do
         post '/star', to: 'comments#addstar'
         # delete '/star', to: 'comments#delstar'

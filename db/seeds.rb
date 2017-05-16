@@ -24,7 +24,7 @@ list = List.new(
 )
 list.save!
 
-Item.create([
+Stack.create([
     {
         list: list,
         title: "Stacked へようこそ！",

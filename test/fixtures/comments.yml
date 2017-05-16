@@ -1,11 +1,11 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
-  item: one
+  stack: one
   body: MyText
   created_by: one
 
 two:
-  item: two
+  stack: two
   body: MyText
   created_by: two

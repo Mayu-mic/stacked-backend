@@ -22,26 +22,26 @@ ActiveRecord::Schema.define(version: 20170511102141) do
   end
 
   create_table "comments", force: :cascade do |t|
-    t.integer  "item_id",                   null: false
+    t.integer  "stack_id",                   null: false
     t.text     "body",                      null: false
     t.integer  "created_by_id",             null: false
     t.integer  "star_count",    default: 0, null: false
     t.datetime "created_at",                null: false
     t.datetime "updated_at",                null: false
     t.index ["created_by_id"], name: "index_comments_on_created_by_id"
-    t.index ["item_id"], name: "index_comments_on_item_id"
+    t.index ["stack_id"], name: "index_comments_on_stack_id"
   end
 
-  create_table "item_stars", force: :cascade do |t|
-    t.integer  "item_id",       null: false
+  create_table "stack_stars", force: :cascade do |t|
+    t.integer  "stack_id",       null: false
     t.integer  "created_by_id", null: false
     t.datetime "created_at",    null: false
     t.datetime "updated_at",    null: false
-    t.index ["created_by_id"], name: "index_item_stars_on_created_by_id"
-    t.index ["item_id"], name: "index_item_stars_on_item_id"
+    t.index ["created_by_id"], name: "index_stack_stars_on_created_by_id"
+    t.index ["stack_id"], name: "index_stack_stars_on_stack_id"
   end
 
-  create_table "items", force: :cascade do |t|
+  create_table "stacks", force: :cascade do |t|
     t.integer  "list_id",                    null: false
     t.string   "title",                      null: false
     t.text     "note",          default: "", null: false
@@ -50,8 +50,8 @@ ActiveRecord::Schema.define(version: 20170511102141) do
     t.integer  "created_by_id",              null: false
     t.datetime "created_at",                 null: false
     t.datetime "updated_at",                 null: false
-    t.index ["created_by_id"], name: "index_items_on_created_by_id"
-    t.index ["list_id"], name: "index_items_on_list_id"
+    t.index ["created_by_id"], name: "index_stacks_on_created_by_id"
+    t.index ["list_id"], name: "index_stacks_on_list_id"
   end
 
   create_table "lists", force: :cascade do |t|

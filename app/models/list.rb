@@ -1,5 +1,5 @@
 class List < ApplicationRecord
-  has_many :items
+  has_many :stacks
   belongs_to :created_by, class_name: 'User'
 
   enum status: [:active, :archived]

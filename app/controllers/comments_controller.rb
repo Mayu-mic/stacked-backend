@@ -2,14 +2,14 @@ class CommentsController < ApplicationController
   before_action :set_comment, only: [:destroy, :addstar]
   before_action :authenticate_user!, only: [:create, :destroy, :addstar, :delstar]
 
-  # GET /items/:item_id/comments
+  # GET /stacks/:stack_id/comments
   def index
-    @comments = Comment.where(item_id: params['item_id'])
+    @comments = Comment.where(stack_id: params['stack_id'])
 
     render json: @comments
   end
 
-  # POST /items/:item_id/comments
+  # POST /stacks/:stack_id/comments
   def create
     @comment = Comment.new(comment_params)
     @comment.created_by = current_user
@@ -31,7 +31,7 @@ class CommentsController < ApplicationController
   def addstar
     @star = CommentStar.new(comment_star_params)
     @star.created_by = current_user
-    @star.item = @item
+    @star.stack = @stack
     if @star.save
       render json: @star
     else
@@ -53,7 +53,7 @@ class CommentsController < ApplicationController
 
     # Only allow a trusted parameter "white list" through.
     def comment_params
-      params.require(:comment).permit(:item_id, :body)
+      params.require(:comment).permit(:stack_id, :body)
     end
 
     # Only allow a trusted parameter "white list" through.
