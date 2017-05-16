@@ -10,7 +10,7 @@ class StacksController < ApplicationController
 
   # GET /stacks/1
   def show
-    render json: @stack, include: [:created_by]
+    render json: @stack, include: [:created_by, :comments]
   end
 
   # POST /lists/:list_id/stacks
