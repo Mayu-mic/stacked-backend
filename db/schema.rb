@@ -22,7 +22,7 @@ ActiveRecord::Schema.define(version: 20170511102141) do
   end
 
   create_table "comments", force: :cascade do |t|
-    t.integer  "stack_id",                   null: false
+    t.integer  "stack_id",                  null: false
     t.text     "body",                      null: false
     t.integer  "created_by_id",             null: false
     t.integer  "star_count",    default: 0, null: false
@@ -32,8 +32,19 @@ ActiveRecord::Schema.define(version: 20170511102141) do
     t.index ["stack_id"], name: "index_comments_on_stack_id"
   end
 
+  create_table "lists", force: :cascade do |t|
+    t.string   "name",                          null: false
+    t.integer  "order",                         null: false
+    t.integer  "status",        default: 0,     null: false
+    t.integer  "created_by_id",                 null: false
+    t.boolean  "is_system",     default: false, null: false
+    t.datetime "created_at",                    null: false
+    t.datetime "updated_at",                    null: false
+    t.index ["created_by_id"], name: "index_lists_on_created_by_id"
+  end
+
   create_table "stack_stars", force: :cascade do |t|
-    t.integer  "stack_id",       null: false
+    t.integer  "stack_id",      null: false
     t.integer  "created_by_id", null: false
     t.datetime "created_at",    null: false
     t.datetime "updated_at",    null: false
@@ -47,22 +58,12 @@ ActiveRecord::Schema.define(version: 20170511102141) do
     t.text     "note",          default: "", null: false
     t.integer  "status",        default: 0,  null: false
     t.integer  "star_count",    default: 0,  null: false
+    t.integer  "comment_count", default: 0,  null: false
     t.integer  "created_by_id",              null: false
     t.datetime "created_at",                 null: false
     t.datetime "updated_at",                 null: false
     t.index ["created_by_id"], name: "index_stacks_on_created_by_id"
     t.index ["list_id"], name: "index_stacks_on_list_id"
-  end
-
-  create_table "lists", force: :cascade do |t|
-    t.string   "name",                          null: false
-    t.integer  "order",                         null: false
-    t.integer  "status",        default: 0,     null: false
-    t.integer  "created_by_id",                 null: false
-    t.boolean  "is_system",     default: false, null: false
-    t.datetime "created_at",                    null: false
-    t.datetime "updated_at",                    null: false
-    t.index ["created_by_id"], name: "index_lists_on_created_by_id"
   end
 
   create_table "users", force: :cascade do |t|
