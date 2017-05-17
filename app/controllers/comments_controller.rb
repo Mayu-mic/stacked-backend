@@ -30,6 +30,12 @@ class CommentsController < ApplicationController
   # POST /comments/1/star
   def addstar
     @star = CommentStar.new(comment_star_params)
+
+    if @star.comment.created_by == current_user
+      render json: ["cannot_star_on_own_comment"], status: :unprocessable_entity
+      return
+    end
+
     @star.created_by = current_user
     if @star.save
       render json: @star.comment, include: [:created_by]

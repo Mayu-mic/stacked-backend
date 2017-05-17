@@ -44,6 +44,12 @@ class StacksController < ApplicationController
   # POST /stacks/1/star
   def addstar
     @star = StackStar.new(stack_star_params)
+
+    if @star.stack.created_by == current_user
+      render json: ["cannot_star_on_own_stack"], status: :unprocessable_entity
+      return
+    end
+
     @star.created_by = current_user
     if @star.save
       render json: @star.stack, include: [:created_by]
