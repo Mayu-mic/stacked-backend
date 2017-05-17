@@ -18,7 +18,7 @@ class StacksController < ApplicationController
     @stack = Stack.new(stack_params)
     @stack.created_by = current_user
 
-    if @stack.save!
+    if @stack.save
       render json: @stack, include: [:created_by], status: :created, location: @stack
     else
       render json: @stack.errors, status: :unprocessable_entity
