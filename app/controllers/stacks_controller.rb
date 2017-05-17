@@ -1,6 +1,7 @@
 class StacksController < ApplicationController
   before_action :set_stack, only: [:show, :update, :destroy]
   before_action :authenticate_user!, only: [:create, :update, :destroy, :addstar, :delstar]
+  before_action :check_owned?, only: [:update, :destroy]
 
   # GET /lists/:list_id/stacks
   def index
@@ -72,5 +73,11 @@ class StacksController < ApplicationController
     # Only allow a trusted parameter "white list" through.
     def stack_star_params
       params.require(:stack_star).permit(:stack_id)
+    end
+
+    def check_owned?
+      if @stack.created_by != current_user
+        render json: ['forbid_edit_error'], status: :unprocessable_entity
+      end
     end
 end
