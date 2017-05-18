@@ -1,6 +1,6 @@
 class StacksController < ApplicationController
   before_action :set_stack, only: [:show, :update, :destroy]
-  before_action :authenticate_user!, only: [:create, :update, :destroy, :addstar, :delstar]
+  before_action :authenticate_user!, only: [:create, :update, :destroy, :addstar, :delstar, :change_status]
   before_action :check_owned?, only: [:update, :destroy]
 
   # GET /lists/:list_id/stacks
@@ -29,6 +29,16 @@ class StacksController < ApplicationController
   # PATCH/PUT /stacks/1
   def update
     if @stack.update(stack_params)
+      render json: @stack, include: [:created_by]
+    else
+      render json: @stack.errors, status: :unprocessable_entity
+    end
+  end
+
+  # PATCH/PUT /stacks/1/status
+  def change_status
+    @stack = Stack.find(params[:stack_id])
+    if @stack.update(stack_status_params)
       render json: @stack, include: [:created_by]
     else
       render json: @stack.errors, status: :unprocessable_entity
@@ -74,6 +84,10 @@ class StacksController < ApplicationController
     # Only allow a trusted parameter "white list" through.
     def stack_params
       params.require(:stack).permit(:title, :note, :list_id)
+    end
+
+    def stack_status_params
+      params.require(:stack).permit(:status)
     end
 
     # Only allow a trusted parameter "white list" through.
