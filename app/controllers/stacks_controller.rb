@@ -5,7 +5,25 @@ class StacksController < ApplicationController
 
   # GET /lists/:list_id/stacks
   def index
-    @stacks = Stack.where(list_id: params['list_id']).order('star_count DESC')
+
+    @filter =
+      case params['filter']
+    when 'active'
+      ['in_progress', 'pending']
+    when 'resolved'
+      ['resolved']
+    when nil, 'all'
+      ['resolved', 'in_progress', 'resolved']
+    else
+      render json: ['unrecognized filter error'], status: :bad_request
+      return
+    end
+
+    @stacks = Stack.where(
+      list_id: params['list_id'],
+      status: @filter,
+    ).order('star_count DESC')
+
     render json: @stacks, include: [:created_by]
   end
 
