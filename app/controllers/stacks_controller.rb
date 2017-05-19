@@ -45,6 +45,13 @@ class StacksController < ApplicationController
 
   # PATCH/PUT /stacks/1
   def update
+
+    # likeされているstackはupdate禁止
+    if @stack.star_count > 0
+      render json: ['forbidden_to_update_liked_stack'], status: :unprocessable_entity
+      return
+    end
+
     if @stack.update(stack_params)
       render json: @stack, include: [:created_by]
     else
