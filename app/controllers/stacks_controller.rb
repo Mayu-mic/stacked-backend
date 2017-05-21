@@ -17,7 +17,7 @@ class StacksController < ApplicationController
       return
     end
 
-    @stacks = Stack.where(
+    @stacks = Stack.includes(:likes).where(
       list_id: params['list_id'],
       status: @filter,
     ).order('like_count DESC')

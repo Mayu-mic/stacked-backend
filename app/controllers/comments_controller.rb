@@ -4,7 +4,7 @@ class CommentsController < ApplicationController
 
   # GET /stacks/:stack_id/comments
   def index
-    @comments = Comment.where(stack_id: params['stack_id'])
+    @comments = Comment.includes(:likes).where(stack_id: params['stack_id'])
 
     @comments.each { |comment| comment.current_user = current_user } if current_user
     render json: @comments, include: [:created_by], methods: :liked
