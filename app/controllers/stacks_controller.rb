@@ -4,7 +4,6 @@ class StacksController < ApplicationController
 
   # GET /lists/:list_id/stacks
   def index
-
     @filter =
       case params['filter']
     when 'active'
@@ -23,12 +22,13 @@ class StacksController < ApplicationController
       status: @filter,
     ).order('star_count DESC')
 
-    render json: @stacks, include: [:created_by]
+    @stacks.each { |stack| stack.current_user = current_user } if current_user
+    render json: @stacks, include: [:created_by], methods: :liked
   end
 
   # GET /stacks/1
   def show
-    render json: @stack, include: [:created_by, :comments]
+    render json: @stack, include: [:created_by, :comments], methods: :liked
   end
 
   # POST /lists/:list_id/stacks
@@ -37,7 +37,7 @@ class StacksController < ApplicationController
     @stack.created_by = current_user
 
     if @stack.save
-      render json: @stack, include: [:created_by], status: :created, location: @stack
+      render json: @stack, include: [:created_by], status: :created, location: @stack, methods: :liked
     else
       render json: @stack.errors, status: :unprocessable_entity
     end
@@ -53,7 +53,7 @@ class StacksController < ApplicationController
     end
 
     if @stack.update(stack_params)
-      render json: @stack, include: [:created_by]
+      render json: @stack, include: [:created_by], methods: :liked
     else
       render json: @stack.errors, status: :unprocessable_entity
     end
@@ -62,8 +62,9 @@ class StacksController < ApplicationController
   # PATCH/PUT /stacks/1/status
   def change_status
     @stack = Stack.find(params[:stack_id])
+    @stack.current_user = current_user
     if @stack.update(stack_status_params)
-      render json: @stack, include: [:created_by]
+      render json: @stack, include: [:created_by], methods: :liked
     else
       render json: @stack.errors, status: :unprocessable_entity
     end
@@ -72,7 +73,7 @@ class StacksController < ApplicationController
   # DELETE /stacks/1
   def destroy
     @stack.destroy
-    render json: @stack, include: [:created_by]
+    render json: @stack, include: [:created_by], methods: :liked
   end
 
   # POST /stacks/1/star
@@ -86,7 +87,8 @@ class StacksController < ApplicationController
 
     @star.created_by = current_user
     if @star.save
-      render json: @star.stack, include: [:created_by]
+      @star.stack.current_user = current_user
+      render json: @star.stack, include: [:created_by], methods: :liked
     else
       render json: @star.errors, status: :unprocessable_entity
     end
@@ -96,13 +98,14 @@ class StacksController < ApplicationController
   def delstar
     @star = StackStar.where(stack_id: stack_id, created_by_id: current_user.id).first
     @star.destroy
-    render json: @star.stack, include: [:created_by]
+    render json: @star.stack, include: [:created_by], methods: :liked
   end
 
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_stack
       @stack = Stack.find(params[:id])
+      @stack.current_user = current_user if current_user
     end
 
     # Only allow a trusted parameter "white list" through.

@@ -6,5 +6,6 @@ class CreateCommentStars < ActiveRecord::Migration[5.0]
 
       t.timestamps
     end
+    add_index :comment_stars, [:comment_id, :created_by_id], unique: true
   end
 end

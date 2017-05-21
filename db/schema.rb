@@ -17,6 +17,7 @@ ActiveRecord::Schema.define(version: 20170511102141) do
     t.integer  "created_by_id", null: false
     t.datetime "created_at",    null: false
     t.datetime "updated_at",    null: false
+    t.index ["comment_id", "created_by_id"], name: "index_comment_stars_on_comment_id_and_created_by_id", unique: true
     t.index ["comment_id"], name: "index_comment_stars_on_comment_id"
     t.index ["created_by_id"], name: "index_comment_stars_on_created_by_id"
   end
@@ -49,6 +50,7 @@ ActiveRecord::Schema.define(version: 20170511102141) do
     t.datetime "created_at",    null: false
     t.datetime "updated_at",    null: false
     t.index ["created_by_id"], name: "index_stack_stars_on_created_by_id"
+    t.index ["stack_id", "created_by_id"], name: "index_stack_stars_on_stack_id_and_created_by_id", unique: true
     t.index ["stack_id"], name: "index_stack_stars_on_stack_id"
   end
 

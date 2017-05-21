@@ -6,5 +6,6 @@ class CreateStackStars < ActiveRecord::Migration[5.0]
 
       t.timestamps
     end
+    add_index :stack_stars, [:stack_id, :created_by_id], unique: true
   end
 end
