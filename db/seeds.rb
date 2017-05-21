@@ -41,3 +41,11 @@ Stack.create([
         created_by_id: 1,
     },
 ])
+
+Comment.create([
+    {
+        stack: Stack.all.first,
+        body: "コメントも自由に追加できます。",
+        created_by_id: 1,
+    }
+])

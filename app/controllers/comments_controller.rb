@@ -6,7 +6,8 @@ class CommentsController < ApplicationController
   def index
     @comments = Comment.where(stack_id: params['stack_id'])
 
-    render json: @comments, include: [:created_by]
+    @comments.each { |comment| comment.current_user = current_user } if current_user
+    render json: @comments, include: [:created_by], methods: :liked
   end
 
   # POST /stacks/:stack_id/comments
@@ -15,7 +16,7 @@ class CommentsController < ApplicationController
     @comment.created_by = current_user
 
     if @comment.save
-      render json: @comment, include: [:created_by], status: :created, location: @comment
+      render json: @comment, include: [:created_by], status: :created, location: @comment, methods: :liked
     else
       render json: @comment.errors, status: :unprocessable_entity
     end
@@ -24,7 +25,7 @@ class CommentsController < ApplicationController
   # DELETE /comments/1
   def destroy
     @comment.destroy
-    render json: @comment, include: [:created_by]
+    render json: @comment, include: [:created_by], methods: :liked
   end
 
   # POST /comments/1/star
@@ -38,7 +39,8 @@ class CommentsController < ApplicationController
 
     @star.created_by = current_user
     if @star.save
-      render json: @star.comment, include: [:created_by]
+      @star.comment.current_user = current_user
+      render json: @star.comment, include: [:created_by], methods: :liked
     else
       render json: @star.errors, status: :unprocessable_entity
     end
@@ -46,15 +48,17 @@ class CommentsController < ApplicationController
 
   # DELETE /comments/1/star
   def delstar
-    @star = CommentStar.where(comment_id: comment_id, created_by_id: current_user.id)
+    @star = CommentStar.where(comment_id: params[:comment_id], created_by_id: current_user.id).first
     @star.destroy
-    render json: @star.comment, include: [:created_by]
+    @star.comment.current_user = current_user
+    render json: @star.comment, include: [:created_by], methods: :liked
   end
 
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_comment
       @comment = Comment.find(params[:id])
+      @comment.current_user = current_user if current_user
     end
 
     # Only allow a trusted parameter "white list" through.

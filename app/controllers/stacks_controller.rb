@@ -96,8 +96,9 @@ class StacksController < ApplicationController
 
   # DELETE /stacks/1/star
   def delstar
-    @star = StackStar.where(stack_id: stack_id, created_by_id: current_user.id).first
+    @star = StackStar.where(stack_id: params[:stack_id], created_by_id: current_user.id).first
     @star.destroy
+    @star.stack.current_user = current_user
     render json: @star.stack, include: [:created_by], methods: :liked
   end
 
