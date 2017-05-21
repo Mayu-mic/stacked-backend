@@ -5,7 +5,7 @@ class CreateStacks < ActiveRecord::Migration[5.0]
       t.string :title, null: false
       t.text :note, null: false, default: ""
       t.integer :status, null: false, default: 0
-      t.integer :star_count, null: false, default: 0
+      t.integer :like_count, null: false, default: 0
       t.integer :comment_count, null: false, default: 0
       t.references :created_by, foreign_key: true, null: false
 

@@ -1,6 +1,6 @@
 class CommentsController < ApplicationController
   before_action :set_comment, only: [:destroy]
-  before_action :authenticate_user!, only: [:create, :destroy, :addstar, :delstar]
+  before_action :authenticate_user!, only: [:create, :destroy, :addlike, :dellike]
 
   # GET /stacks/:stack_id/comments
   def index
@@ -28,30 +28,30 @@ class CommentsController < ApplicationController
     render json: @comment, include: [:created_by], methods: :liked
   end
 
-  # POST /comments/1/star
-  def addstar
-    @star = CommentStar.new(comment_star_params)
+  # POST /comments/1/like
+  def addlike
+    @like = CommentLike.new(comment_like_params)
 
-    if @star.comment.created_by == current_user
-      render json: ["cannot_star_on_own_comment"], status: :unprocessable_entity
+    if @like.comment.created_by == current_user
+      render json: ["cannot_like_on_own_comment"], status: :unprocessable_entity
       return
     end
 
-    @star.created_by = current_user
-    if @star.save
-      @star.comment.current_user = current_user
-      render json: @star.comment, include: [:created_by], methods: :liked
+    @like.created_by = current_user
+    if @like.save
+      @like.comment.current_user = current_user
+      render json: @like.comment, include: [:created_by], methods: :liked
     else
-      render json: @star.errors, status: :unprocessable_entity
+      render json: @like.errors, status: :unprocessable_entity
     end
   end
 
-  # DELETE /comments/1/star
-  def delstar
-    @star = CommentStar.where(comment_id: params[:comment_id], created_by_id: current_user.id).first
-    @star.destroy
-    @star.comment.current_user = current_user
-    render json: @star.comment, include: [:created_by], methods: :liked
+  # DELETE /comments/1/like
+  def dellike
+    @like = CommentLike.where(comment_id: params[:comment_id], created_by_id: current_user.id).first
+    @like.destroy
+    @like.comment.current_user = current_user
+    render json: @like.comment, include: [:created_by], methods: :liked
   end
 
   private
@@ -67,7 +67,7 @@ class CommentsController < ApplicationController
     end
 
     # Only allow a trusted parameter "white list" through.
-    def comment_star_params
-      params.require(:comment_star).permit(:comment_id)
+    def comment_like_params
+      params.require(:comment_like).permit(:comment_id)
     end
 end

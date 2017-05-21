@@ -1,6 +1,6 @@
 class StacksController < ApplicationController
   before_action :set_stack, only: [:show, :update, :destroy]
-  before_action :authenticate_user!, only: [:create, :update, :destroy, :addstar, :delstar, :change_status]
+  before_action :authenticate_user!, only: [:create, :update, :destroy, :addlike, :dellike, :change_status]
 
   # GET /lists/:list_id/stacks
   def index
@@ -20,7 +20,7 @@ class StacksController < ApplicationController
     @stacks = Stack.where(
       list_id: params['list_id'],
       status: @filter,
-    ).order('star_count DESC')
+    ).order('like_count DESC')
 
     @stacks.each { |stack| stack.current_user = current_user } if current_user
     render json: @stacks, include: [:created_by], methods: :liked
@@ -47,7 +47,7 @@ class StacksController < ApplicationController
   def update
 
     # likeされているstackはupdate禁止
-    if @stack.star_count > 0
+    if @stack.like_count > 0
       render json: ['forbidden_to_update_liked_stack'], status: :unprocessable_entity
       return
     end
@@ -76,30 +76,30 @@ class StacksController < ApplicationController
     render json: @stack, include: [:created_by], methods: :liked
   end
 
-  # POST /stacks/1/star
-  def addstar
-    @star = StackStar.new(stack_star_params)
+  # POST /stacks/1/like
+  def addlike
+    @like = StackLike.new(stack_like_params)
 
-    if @star.stack.created_by == current_user
-      render json: ["cannot_star_on_own_stack"], status: :unprocessable_entity
+    if @like.stack.created_by == current_user
+      render json: ["cannot_like_on_own_stack"], status: :unprocessable_entity
       return
     end
 
-    @star.created_by = current_user
-    if @star.save
-      @star.stack.current_user = current_user
-      render json: @star.stack, include: [:created_by], methods: :liked
+    @like.created_by = current_user
+    if @like.save
+      @like.stack.current_user = current_user
+      render json: @like.stack, include: [:created_by], methods: :liked
     else
-      render json: @star.errors, status: :unprocessable_entity
+      render json: @like.errors, status: :unprocessable_entity
     end
   end
 
-  # DELETE /stacks/1/star
-  def delstar
-    @star = StackStar.where(stack_id: params[:stack_id], created_by_id: current_user.id).first
-    @star.destroy
-    @star.stack.current_user = current_user
-    render json: @star.stack, include: [:created_by], methods: :liked
+  # DELETE /stacks/1/like
+  def dellike
+    @like = StackLike.where(stack_id: params[:stack_id], created_by_id: current_user.id).first
+    @like.destroy
+    @like.stack.current_user = current_user
+    render json: @like.stack, include: [:created_by], methods: :liked
   end
 
   private
@@ -119,7 +119,7 @@ class StacksController < ApplicationController
     end
 
     # Only allow a trusted parameter "white list" through.
-    def stack_star_params
-      params.require(:stack_star).permit(:stack_id)
+    def stack_like_params
+      params.require(:stack_like).permit(:stack_id)
     end
 end

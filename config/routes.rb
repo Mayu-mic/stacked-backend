@@ -1,12 +1,12 @@
 Rails.application.routes.draw do
   resources :lists, shallow: true, only: [:index, :create, :update] do
     resources :stacks, only: [:index, :show, :create, :update, :destroy] do
-      post '/star', to: 'stacks#addstar'
-      delete '/star', to: 'stacks#delstar'
+      post '/like', to: 'stacks#addlike'
+      delete '/like', to: 'stacks#dellike'
       patch '/status', to: 'stacks#change_status'
       resources :comments, only: [:index, :create, :destroy] do
-        post '/star', to: 'comments#addstar'
-        delete '/star', to: 'comments#delstar'
+        post '/like', to: 'comments#addlike'
+        delete '/like', to: 'comments#dellike'
       end
     end
   end

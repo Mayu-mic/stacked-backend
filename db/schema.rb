@@ -12,21 +12,21 @@
 
 ActiveRecord::Schema.define(version: 20170511102141) do
 
-  create_table "comment_stars", force: :cascade do |t|
+  create_table "comment_likes", force: :cascade do |t|
     t.integer  "comment_id",    null: false
     t.integer  "created_by_id", null: false
     t.datetime "created_at",    null: false
     t.datetime "updated_at",    null: false
-    t.index ["comment_id", "created_by_id"], name: "index_comment_stars_on_comment_id_and_created_by_id", unique: true
-    t.index ["comment_id"], name: "index_comment_stars_on_comment_id"
-    t.index ["created_by_id"], name: "index_comment_stars_on_created_by_id"
+    t.index ["comment_id", "created_by_id"], name: "index_comment_likes_on_comment_id_and_created_by_id", unique: true
+    t.index ["comment_id"], name: "index_comment_likes_on_comment_id"
+    t.index ["created_by_id"], name: "index_comment_likes_on_created_by_id"
   end
 
   create_table "comments", force: :cascade do |t|
     t.integer  "stack_id",                  null: false
     t.text     "body",                      null: false
     t.integer  "created_by_id",             null: false
-    t.integer  "star_count",    default: 0, null: false
+    t.integer  "like_count",    default: 0, null: false
     t.datetime "created_at",                null: false
     t.datetime "updated_at",                null: false
     t.index ["created_by_id"], name: "index_comments_on_created_by_id"
@@ -44,14 +44,14 @@ ActiveRecord::Schema.define(version: 20170511102141) do
     t.index ["created_by_id"], name: "index_lists_on_created_by_id"
   end
 
-  create_table "stack_stars", force: :cascade do |t|
+  create_table "stack_likes", force: :cascade do |t|
     t.integer  "stack_id",      null: false
     t.integer  "created_by_id", null: false
     t.datetime "created_at",    null: false
     t.datetime "updated_at",    null: false
-    t.index ["created_by_id"], name: "index_stack_stars_on_created_by_id"
-    t.index ["stack_id", "created_by_id"], name: "index_stack_stars_on_stack_id_and_created_by_id", unique: true
-    t.index ["stack_id"], name: "index_stack_stars_on_stack_id"
+    t.index ["created_by_id"], name: "index_stack_likes_on_created_by_id"
+    t.index ["stack_id", "created_by_id"], name: "index_stack_likes_on_stack_id_and_created_by_id", unique: true
+    t.index ["stack_id"], name: "index_stack_likes_on_stack_id"
   end
 
   create_table "stacks", force: :cascade do |t|
@@ -59,7 +59,7 @@ ActiveRecord::Schema.define(version: 20170511102141) do
     t.string   "title",                      null: false
     t.text     "note",          default: "", null: false
     t.integer  "status",        default: 0,  null: false
-    t.integer  "star_count",    default: 0,  null: false
+    t.integer  "like_count",    default: 0,  null: false
     t.integer  "comment_count", default: 0,  null: false
     t.integer  "created_by_id",              null: false
     t.datetime "created_at",                 null: false
